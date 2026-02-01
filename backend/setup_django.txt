@@ -18,7 +18,8 @@
 
 2️⃣ START BACKEND:
    Go to backend folder and run:
-   python manage.py runserver
+
+   source .venv/bin/activate && python manage.py runserver
 
 3️⃣ START FRONTEND:
    Go to frontend folder and run:

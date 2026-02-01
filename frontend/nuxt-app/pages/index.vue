@@ -1,111 +1,155 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div
+    class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
+  >
     <!-- Header -->
-    <header class="bg-blue-600 text-white shadow-lg">
-      <div class="container mx-auto px-4 py-6">
-        <h1 class="text-3xl font-bold flex items-center">
-          <Icon name="mdi:map-marker-radius" class="mr-3 text-4xl" />
-          GPS Tracking System Dashboard
-        </h1>
-        <p class="text-blue-200 mt-2">
-          Manage and monitor your GPS tracking devices
-        </p>
+    <header
+      class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white"
+    >
+      <div class="container mx-auto px-6 py-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-4xl font-extrabold flex items-center mb-2">
+              <Icon
+                name="mdi:map-marker-radius"
+                class="mr-3 text-5xl animate-pulse"
+              />
+              GPS Tracking System
+            </h1>
+            <p class="text-blue-100 text-lg">
+              Real-time device monitoring and management
+            </p>
+          </div>
+          <div class="hidden md:block">
+            <div class="text-right">
+              <p class="text-sm text-blue-200">Last Sync</p>
+              <p class="text-lg font-semibold">{{ lastUpdated || "Never" }}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="container mx-auto px-6 py-10">
       <!-- Statistics Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <div class="flex items-center">
-            <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
-              <Icon name="mdi:devices" class="text-2xl" />
-            </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <div
+          class="bg-white rounded-lg p-6 border border-gray-200 hover:border-blue-300 transition-all duration-300"
+        >
+          <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm text-gray-600">Total Devices</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p
+                class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1"
+              >
+                Total Devices
+              </p>
+              <p class="text-4xl font-extrabold text-gray-900">
                 {{ stats.total_devices }}
               </p>
             </div>
+            <div
+              class="p-4 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200"
+            >
+              <Icon name="mdi:devices" class="text-4xl text-blue-600" />
+            </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <div class="flex items-center">
-            <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
-              <Icon name="mdi:map-marker-check" class="text-2xl" />
-            </div>
+        <div
+          class="bg-white rounded-lg p-6 border border-gray-200 hover:border-green-300 transition-all duration-300"
+        >
+          <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm text-gray-600">With GPS</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p
+                class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1"
+              >
+                With GPS
+              </p>
+              <p class="text-4xl font-extrabold text-gray-900">
                 {{ stats.with_coordinates }}
               </p>
             </div>
+            <div
+              class="p-4 rounded-2xl bg-gradient-to-br from-green-100 to-green-200"
+            >
+              <Icon
+                name="mdi:map-marker-check"
+                class="text-4xl text-green-600"
+              />
+            </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <div class="flex items-center">
-            <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
-              <Icon name="mdi:map-marker-off" class="text-2xl" />
-            </div>
+        <div
+          class="bg-white rounded-lg p-6 border border-gray-200 hover:border-red-300 transition-all duration-300"
+        >
+          <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm text-gray-600">No GPS</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p
+                class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1"
+              >
+                No GPS
+              </p>
+              <p class="text-4xl font-extrabold text-gray-900">
                 {{ stats.without_coordinates }}
               </p>
             </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <div class="flex items-center">
-            <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
-              <Icon name="mdi:clock-outline" class="text-2xl" />
-            </div>
-            <div>
-              <p class="text-sm text-gray-600">Last Updated</p>
-              <p class="text-sm font-semibold text-gray-900">
-                {{ lastUpdated }}
-              </p>
+            <div
+              class="p-4 rounded-2xl bg-gradient-to-br from-red-100 to-red-200"
+            >
+              <Icon name="mdi:map-marker-off" class="text-4xl text-red-600" />
             </div>
           </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
-          <Icon name="mdi:cog" class="mr-2" />
-          Actions
+      <div class="bg-white rounded-2xl p-8 mb-10 border border-gray-200">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+          <div class="p-2 rounded-lg bg-blue-100 mr-3">
+            <Icon name="mdi:cog" class="text-blue-600 text-xl" />
+          </div>
+          Quick Actions
         </h2>
 
         <div class="flex flex-wrap gap-4">
           <button
-            class="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-lg flex items-center font-semibold transition duration-200"
+            class="group bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-blue-300 disabled:to-blue-400 text-white px-8 py-4 rounded-xl flex items-center font-semibold transition-all duration-300 transform hover:-translate-y-0.5"
             :disabled="loading.fetch"
             @click="fetchTrackingData"
           >
-            <Icon name="mdi:download" class="mr-2" />
+            <Icon
+              :name="loading.fetch ? 'mdi:loading' : 'mdi:download'"
+              :class="{ 'animate-spin': loading.fetch }"
+              class="mr-2 text-xl"
+            />
             {{ loading.fetch ? "Fetching..." : "Fetch GPS Data" }}
           </button>
 
           <button
-            class="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-3 rounded-lg flex items-center font-semibold transition duration-200"
+            class="group bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-green-300 disabled:to-green-400 text-white px-8 py-4 rounded-xl flex items-center font-semibold transition-all duration-300 transform hover:-translate-y-0.5"
             :disabled="loading.export"
             @click="exportToCsv"
           >
-            <Icon name="mdi:file-export" class="mr-2" />
+            <Icon
+              :name="loading.export ? 'mdi:loading' : 'mdi:file-export'"
+              :class="{ 'animate-spin': loading.export }"
+              class="mr-2 text-xl"
+            />
             {{ loading.export ? "Exporting..." : "Export to CSV" }}
           </button>
 
           <button
-            class="bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white px-6 py-3 rounded-lg flex items-center font-semibold transition duration-200"
+            class="group bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-purple-300 disabled:to-purple-400 text-white px-8 py-4 rounded-xl flex items-center font-semibold transition-all duration-300 transform hover:-translate-y-0.5"
             :disabled="loading.refresh"
             @click="refreshData"
           >
-            <Icon name="mdi:refresh" class="mr-2" />
+            <Icon
+              :name="loading.refresh ? 'mdi:loading' : 'mdi:refresh'"
+              :class="{ 'animate-spin': loading.refresh }"
+              class="mr-2 text-xl"
+            />
             {{ loading.refresh ? "Refreshing..." : "Refresh Data" }}
           </button>
         </div>
@@ -113,105 +157,137 @@
         <!-- Load to Database Section -->
         <div
           v-if="latestLogFile"
-          class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg"
+          class="mt-8 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl"
         >
-          <h3 class="font-semibold text-yellow-800 mb-2">
-            Latest GPS Data Available
-          </h3>
-          <p class="text-sm text-yellow-700 mb-3">{{ latestLogFile.folder }}</p>
-          <div class="flex gap-3">
-            <button
-              class="bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-400 text-white px-4 py-2 rounded flex items-center text-sm font-semibold transition duration-200"
-              :disabled="loading.load"
-              @click="loadToDatabase(false)"
-            >
-              <Icon name="mdi:database-plus" class="mr-1" />
-              {{ loading.load ? "Loading..." : "Load to Database" }}
-            </button>
-            <button
-              class="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white px-4 py-2 rounded flex items-center text-sm font-semibold transition duration-200"
-              :disabled="loading.load"
-              @click="loadToDatabase(true)"
-            >
-              <Icon name="mdi:database-refresh" class="mr-1" />
-              {{ loading.load ? "Loading..." : "Replace All Data" }}
-            </button>
+          <div class="flex items-start">
+            <div class="p-2 rounded-lg bg-amber-200 mr-3">
+              <Icon name="mdi:information" class="text-amber-700 text-xl" />
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-amber-900 mb-1 text-lg">
+                Latest GPS Data Available
+              </h3>
+              <p class="text-sm text-amber-700 mb-4 font-medium">
+                {{ latestLogFile.folder }}
+              </p>
+              <div class="flex gap-3">
+                <button
+                  class="bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 disabled:from-amber-300 disabled:to-yellow-300 text-white px-6 py-3 rounded-lg flex items-center font-semibold transition-all duration-300"
+                  :disabled="loading.load"
+                  @click="loadToDatabase(false)"
+                >
+                  <Icon
+                    :name="loading.load ? 'mdi:loading' : 'mdi:database-plus'"
+                    :class="{ 'animate-spin': loading.load }"
+                    class="mr-2"
+                  />
+                  {{ loading.load ? "Loading..." : "Load to Database" }}
+                </button>
+                <button
+                  class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-red-300 disabled:to-red-400 text-white px-6 py-3 rounded-lg flex items-center font-semibold transition-all duration-300"
+                  :disabled="loading.load"
+                  @click="loadToDatabase(true)"
+                >
+                  <Icon
+                    :name="
+                      loading.load ? 'mdi:loading' : 'mdi:database-refresh'
+                    "
+                    :class="{ 'animate-spin': loading.load }"
+                    class="mr-2"
+                  />
+                  {{ loading.load ? "Loading..." : "Replace All Data" }}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Device Data Table -->
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
-          <h2 class="text-xl font-bold text-gray-900 flex items-center">
-            <Icon name="mdi:table" class="mr-2" />
+      <div class="bg-white rounded-2xl overflow-hidden border border-gray-200">
+        <div
+          class="p-6 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-gray-50"
+        >
+          <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+            <div class="p-2 rounded-lg bg-blue-100 mr-3">
+              <Icon name="mdi:table" class="text-blue-600 text-xl" />
+            </div>
             Device Records
+            <span class="ml-3 text-sm font-normal text-gray-500">
+              ({{ pagination.total_records }} devices)
+            </span>
           </h2>
         </div>
 
         <!-- Table -->
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50">
+            <thead class="bg-gradient-to-r from-gray-50 to-slate-50">
               <tr>
                 <th
-                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Rank
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   IMEI
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Coordinates
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Status
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Last Update
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Data Status
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Time Since Update
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white divide-y divide-gray-100">
               <tr
                 v-for="(device, index) in devices"
                 :key="device.ranking_id"
-                class="hover:bg-gray-50"
+                class="hover:bg-blue-50 transition-colors duration-150"
               >
                 <td
-                  class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                  class="px-6 py-5 whitespace-nowrap text-sm font-bold text-gray-900"
                 >
-                  #{{
-                    (pagination.current_page - 1) * pagination.per_page +
-                    index +
-                    1
-                  }}
+                  <div class="flex items-center">
+                    <span
+                      class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold"
+                    >
+                      #{{
+                        (pagination.current_page - 1) * pagination.per_page +
+                        index +
+                        1
+                      }}
+                    </span>
+                  </div>
                 </td>
                 <td
-                  class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-mono"
+                  class="px-6 py-5 whitespace-nowrap text-sm text-gray-900 font-mono font-semibold"
                 >
                   {{ device.imei }}
                 </td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-900">
                   <span
                     v-if="
                       device.latitude &&
@@ -219,60 +295,92 @@
                       device.latitude !== 0 &&
                       device.longitude !== 0
                     "
+                    class="flex items-center"
                   >
+                    <Icon name="mdi:map-marker" class="text-green-500 mr-1" />
                     {{ device.latitude.toFixed(6) }},
                     {{ device.longitude.toFixed(6) }}
                   </span>
-                  <span v-else class="text-gray-400">No GPS data</span>
+                  <span v-else class="text-gray-400 flex items-center">
+                    <Icon name="mdi:map-marker-off-outline" class="mr-1" />
+                    No GPS data
+                  </span>
                 </td>
-                <td class="px-4 py-4 whitespace-nowrap">
+                <td class="px-6 py-5 whitespace-nowrap">
                   <span
                     :class="getStatusColor(device.status)"
-                    class="px-2 py-1 text-xs font-semibold rounded-full"
+                    class="px-3 py-1.5 text-xs font-bold rounded-full"
                   >
                     {{ device.status }}
                   </span>
                 </td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div v-if="device.hearttime_date">
-                    <div>{{ device.hearttime_date }}</div>
-                    <div class="text-xs text-gray-500">
-                      {{ device.hearttime_time }}
+                <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-900">
+                  <div v-if="device.hearttime_date" class="flex items-center">
+                    <Icon
+                      name="mdi:calendar-clock"
+                      class="text-gray-400 mr-2"
+                    />
+                    <div>
+                      <div class="font-semibold">
+                        {{ device.hearttime_date }}
+                      </div>
+                      <div class="text-xs text-gray-500">
+                        {{ device.hearttime_time }}
+                      </div>
                     </div>
                   </div>
-                  <span v-else class="text-gray-400">No data</span>
+                  <span v-else class="text-gray-400 flex items-center">
+                    <Icon name="mdi:calendar-remove" class="mr-1" />
+                    No data
+                  </span>
                 </td>
-                <td class="px-4 py-4 whitespace-nowrap">
+                <td class="px-6 py-5 whitespace-nowrap">
                   <span
                     :class="getDataStatusColor(device.datastatus_description)"
-                    class="px-2 py-1 text-xs font-semibold rounded-full"
+                    class="px-3 py-1.5 text-xs font-bold rounded-full flex items-center justify-center w-fit"
                   >
+                    <span
+                      :class="
+                        device.datastatus_description === 'Online'
+                          ? 'animate-pulse'
+                          : ''
+                      "
+                      class="w-2 h-2 rounded-full mr-2"
+                      :style="{
+                        backgroundColor:
+                          device.datastatus_description === 'Online'
+                            ? '#10b981'
+                            : device.datastatus_description === 'Offline'
+                              ? '#ef4444'
+                              : '#f59e0b',
+                      }"
+                    />
                     {{ device.datastatus_description }}
                   </span>
                 </td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-900">
                   <span
                     :class="[
                       device.datastatus_description === 'Online'
-                        ? 'bg-green-100 text-green-800'
+                        ? 'bg-green-100 text-green-800 border border-green-200'
                         : getTimeSinceColorClass(device.TimeSinceUpdate),
-                      'px-2 py-1 text-xs font-semibold rounded-full',
+                      'px-3 py-1.5 text-xs font-bold rounded-full',
                     ]"
                   >
                     {{
                       device.datastatus_description === "Online"
                         ? "Active"
                         : device.TimeAgo
-                        ? device.TimeAgo +
-                          (device.TimeSinceUpdate
-                            ? " (" + device.TimeSinceUpdate + ")"
-                            : "")
-                        : getTimeAgoLabel(device.TimeSinceUpdate)
-                        ? getTimeAgoLabel(device.TimeSinceUpdate) +
-                          (device.TimeSinceUpdate
-                            ? " (" + device.TimeSinceUpdate + ")"
-                            : "")
-                        : "No data"
+                          ? device.TimeAgo +
+                            (device.TimeSinceUpdate
+                              ? " (" + device.TimeSinceUpdate + ")"
+                              : "")
+                          : getTimeAgoLabel(device.TimeSinceUpdate)
+                            ? getTimeAgoLabel(device.TimeSinceUpdate) +
+                              (device.TimeSinceUpdate
+                                ? " (" + device.TimeSinceUpdate + ")"
+                                : "")
+                            : "No data"
                     }}
                   </span>
                 </td>
@@ -283,18 +391,18 @@
 
         <!-- Pagination -->
         <div
-          class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200"
+          class="bg-gradient-to-r from-gray-50 to-slate-50 px-6 py-4 flex items-center justify-between border-t-2 border-gray-200"
         >
           <div class="flex-1 flex justify-between sm:hidden">
             <button
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="relative inline-flex items-center px-4 py-2 border-2 border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               :disabled="!pagination.has_previous"
               @click="previousPage"
             >
               Previous
             </button>
             <button
-              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="ml-3 relative inline-flex items-center px-4 py-2 border-2 border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               :disabled="!pagination.has_next"
               @click="nextPage"
             >
@@ -305,28 +413,36 @@
             class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between"
           >
             <div>
-              <p class="text-sm text-gray-700">
+              <p class="text-sm text-gray-700 font-medium">
                 Showing page
-                <span class="font-medium">{{ pagination.current_page }}</span>
+                <span class="font-bold text-blue-600">{{
+                  pagination.current_page
+                }}</span>
                 of
-                <span class="font-medium">{{ pagination.total_pages }}</span>
-                ({{ pagination.total_records }} total records)
+                <span class="font-bold text-blue-600">{{
+                  pagination.total_pages
+                }}</span>
+                <span class="text-gray-500 ml-2"
+                  >({{ pagination.total_records }} total records)</span
+                >
               </p>
             </div>
             <div class="flex space-x-2">
               <button
-                class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
+                class="relative inline-flex items-center px-4 py-2 border-2 border-gray-300 bg-white text-sm font-semibold text-gray-700 hover:bg-blue-50 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all"
                 :disabled="!pagination.has_previous"
                 @click="previousPage"
               >
-                <Icon name="mdi:chevron-left" />
+                <Icon name="mdi:chevron-left" class="text-lg" />
+                Previous
               </button>
               <button
-                class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
+                class="relative inline-flex items-center px-4 py-2 border-2 border-gray-300 bg-white text-sm font-semibold text-gray-700 hover:bg-blue-50 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-all"
                 :disabled="!pagination.has_next"
                 @click="nextPage"
               >
-                <Icon name="mdi:chevron-right" />
+                Next
+                <Icon name="mdi:chevron-right" class="text-lg" />
               </button>
             </div>
           </div>
@@ -335,20 +451,48 @@
     </main>
 
     <!-- Toast Notifications -->
-    <div v-if="message.text" class="fixed top-4 right-4 z-50">
-      <div
-        :class="message.type === 'success' ? 'bg-green-500' : 'bg-red-500'"
-        class="text-white px-6 py-4 rounded-lg shadow-lg flex items-center"
-      >
-        <Icon
-          :name="
-            message.type === 'success' ? 'mdi:check-circle' : 'mdi:alert-circle'
+    <transition
+      enter-active-class="transform transition duration-300 ease-out"
+      enter-from-class="translate-x-full opacity-0"
+      enter-to-class="translate-x-0 opacity-100"
+      leave-active-class="transform transition duration-200 ease-in"
+      leave-from-class="translate-x-0 opacity-100"
+      leave-to-class="translate-x-full opacity-0"
+    >
+      <div v-if="message.text" class="fixed top-6 right-6 z-50 max-w-md">
+        <div
+          :class="
+            message.type === 'success'
+              ? 'bg-gradient-to-r from-green-500 to-green-600'
+              : 'bg-gradient-to-r from-red-500 to-red-600'
           "
-          class="mr-2"
-        />
-        {{ message.text }}
+          class="text-white px-6 py-4 rounded-xl flex items-center border-l-4"
+          :style="{
+            borderColor: message.type === 'success' ? '#10b981' : '#ef4444',
+          }"
+        >
+          <div class="p-2 rounded-lg bg-white bg-opacity-20 mr-3">
+            <Icon
+              :name="
+                message.type === 'success'
+                  ? 'mdi:check-circle'
+                  : 'mdi:alert-circle'
+              "
+              class="text-2xl"
+            />
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold">{{ message.text }}</p>
+          </div>
+          <button
+            class="ml-3 hover:bg-white hover:bg-opacity-20 rounded-lg p-1 transition-all"
+            @click="message.text = ''"
+          >
+            <Icon name="mdi:close" class="text-xl" />
+          </button>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -409,17 +553,21 @@ const showMessage = (text, type = "success") => {
 };
 
 const getStatusColor = (status) => {
-  if (status === "success") return "bg-green-100 text-green-800";
+  if (status === "success")
+    return "bg-green-100 text-green-800 border border-green-200";
   if (status.includes("error") || status.includes("can't access"))
-    return "bg-red-100 text-red-800";
-  return "bg-yellow-100 text-yellow-800";
+    return "bg-red-100 text-red-800 border border-red-200";
+  return "bg-yellow-100 text-yellow-800 border border-yellow-200";
 };
 
 const getDataStatusColor = (status) => {
-  if (status === "Online") return "bg-green-100 text-green-800";
-  if (status === "Offline") return "bg-red-100 text-red-800";
-  if (status === "Expired") return "bg-orange-100 text-orange-800";
-  return "bg-gray-100 text-gray-800";
+  if (status === "Online")
+    return "bg-green-100 text-green-800 border border-green-200";
+  if (status === "Offline")
+    return "bg-red-100 text-red-800 border border-red-200";
+  if (status === "Expired")
+    return "bg-orange-100 text-orange-800 border border-orange-200";
+  return "bg-gray-100 text-gray-800 border border-gray-200";
 };
 
 // Parse the TimeSinceUpdate string (e.g. '153d23h46min') into total minutes
@@ -441,10 +589,11 @@ const parseTimeSinceToMinutes = (timeSinceStr) => {
 // Map TimeSinceUpdate age (minutes) to color classes
 const getTimeSinceColorClass = (timeSinceStr) => {
   const mins = parseTimeSinceToMinutes(timeSinceStr);
-  if (mins === null) return "bg-gray-100 text-gray-800";
-  if (mins < 60) return "bg-green-100 text-green-800"; // < 1 hour
-  if (mins < 1440) return "bg-yellow-100 text-yellow-800"; // < 24 hours
-  return "bg-red-100 text-red-800"; // >= 24 hours
+  if (mins === null) return "bg-gray-100 text-gray-800 border border-gray-200";
+  if (mins < 60) return "bg-green-100 text-green-800 border border-green-200"; // < 1 hour
+  if (mins < 1440)
+    return "bg-yellow-100 text-yellow-800 border border-yellow-200"; // < 24 hours
+  return "bg-red-100 text-red-800 border border-red-200"; // >= 24 hours
 };
 
 // Return compact label like '1y ago', '5m ago', '4d ago', '3h ago', '12min ago' from TimeSinceUpdate
@@ -487,7 +636,7 @@ const fetchStats = async () => {
 const fetchDevices = async (page = 1) => {
   try {
     const response = await $fetch(
-      `${apiBase}/devices/?page=${page}&per_page=50`
+      `${apiBase}/devices/?page=${page}&per_page=50`,
     );
     if (response.success) {
       devices.value = response.data;

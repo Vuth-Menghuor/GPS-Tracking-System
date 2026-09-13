@@ -60,14 +60,15 @@ class Command(BaseCommand):
 
     def load_data_to_db(self, data):
         """Load data efficiently using batched PostgreSQL/SQLite upserts."""
-        created_count = 0
-        updated_count = 0
+        upserted_count = 0
         error_count = 0
 
         # update_or_create performs multiple queries for every IMEI. That is far
         # too slow for a hosted request containing thousands of devices, so use
         # one conflict-aware bulk insert per batch instead.
-        batch_size = 500
+        # Keep each PostgreSQL statement below its parameter limit while making
+        # only a handful of network round-trips to the hosted database.
+        batch_size = 2000
         for i in range(0, len(data), batch_size):
             batch = data[i:i + batch_size]
             devices = []
@@ -115,11 +116,6 @@ class Command(BaseCommand):
                     ))
 
             if devices:
-                imeis = [device.imei for device in devices]
-                existing_imeis = set(DeviceData.objects.filter(imei__in=imeis).values_list('imei', flat=True))
-                created_count += sum(device.imei not in existing_imeis for device in devices)
-                updated_count += sum(device.imei in existing_imeis for device in devices)
-
                 with transaction.atomic():
                     DeviceData.objects.bulk_create(
                         devices,
@@ -133,13 +129,13 @@ class Command(BaseCommand):
                         ],
                         unique_fields=['imei'],
                     )
+                upserted_count += len(devices)
             
             # Progress update
             processed = min(i + batch_size, len(data))
             self.stdout.write(f'📊 Processed {processed}/{len(data)} records...')
 
         # Final statistics
-        self.stdout.write(self.style.SUCCESS(f'✅ Created: {created_count} records'))
-        self.stdout.write(self.style.SUCCESS(f'🔄 Updated: {updated_count} records'))
+        self.stdout.write(self.style.SUCCESS(f'✅ Upserted: {upserted_count} records'))
         if error_count > 0:
             self.stdout.write(self.style.WARNING(f'⚠️ Errors: {error_count} records'))

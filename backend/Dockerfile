@@ -19,8 +19,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
+# Collect static files without exposing a production secret in the image.
+RUN SECRET_KEY=build-placeholder DEBUG=False python manage.py collectstatic --noinput
 
 # Expose port
 EXPOSE 8000

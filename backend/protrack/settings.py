@@ -13,20 +13,35 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 # from dotenv import load_dotenv
 # load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
+
+
+def get_csv_env(name, defaults=()):
+    """Return a de-duplicated list from a comma-separated environment variable."""
+    values = [value.strip() for value in os.getenv(name, '').split(',') if value.strip()]
+    return list(dict.fromkeys([*defaults, *values]))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'mGUEDUBr7PRovlaSu_s7zhJvWm56UEKhLobn5VMADJmhfMCXTJPoqjb2CA1QXL4bSJw')
+DEBUG = os.getenv('DEBUG', 'true').lower() == 'true'
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG or os.getenv('RENDER') != 'true':
+        SECRET_KEY = 'local-development-key-not-for-production'
+    else:
+        raise ImproperlyConfigured('SECRET_KEY must be set on Render.')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
-
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'gps-tracking-backend-7n1x.onrender.com,localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = get_csv_env(
+    'ALLOWED_HOSTS',
+    defaults=('localhost', '127.0.0.1', os.getenv('RENDER_EXTERNAL_HOSTNAME', '')),
+)
 
 
 # Application definition
@@ -130,12 +145,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings for frontend communication
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'https://gps-tracking-systeam-v2.vercel.app',
-    'https://gps-tracking-systeam-v2-7rnaiwotf-vuth-menghuors-projects.vercel.app',
-]
+CORS_ALLOWED_ORIGINS = get_csv_env(
+    'CORS_ALLOWED_ORIGINS',
+    defaults=('http://localhost:3000', 'http://127.0.0.1:3000'),
+)
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_HEADERS = True

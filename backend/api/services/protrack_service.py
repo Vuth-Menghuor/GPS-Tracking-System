@@ -1,4 +1,5 @@
 import hashlib
+import os
 import time
 import requests
 import asyncio
@@ -12,8 +13,12 @@ logger = logging.getLogger(__name__)
 
 def get_token():
     """Get authentication token from ProTrack365 API"""
-    account = "bajajtrack"
-    password = "bajajrecombodia"
+    account = os.getenv("PROTRACK_ACCOUNT")
+    password = os.getenv("PROTRACK_PASSWORD")
+    if not account or not password:
+        raise ValueError(
+            "PROTRACK_ACCOUNT and PROTRACK_PASSWORD must be configured before fetching tracking data."
+        )
     unix_time = int(time.time())
 
     # Generate MD5 hashed password

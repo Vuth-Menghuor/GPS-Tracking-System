@@ -68,7 +68,7 @@ class Command(BaseCommand):
         # one conflict-aware bulk insert per batch instead.
         # Keep each PostgreSQL statement below its parameter limit while making
         # only a handful of network round-trips to the hosted database.
-        batch_size = 2000
+        batch_size = 250
         for i in range(0, len(data), batch_size):
             batch = data[i:i + batch_size]
             devices = []

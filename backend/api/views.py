@@ -8,10 +8,21 @@ import json
 import csv
 import os
 import subprocess
+import threading
 from datetime import datetime
+from django.db import close_old_connections
 from .models import DeviceData
 from datetime import timezone, timedelta
 import math
+
+
+import_job_lock = threading.Lock()
+import_job_status = {
+    'running': False,
+    'success': None,
+    'error': None,
+    'total_records': 0,
+}
 
 def get_relative_short_label(unix_timestamp):
     if not unix_timestamp or str(unix_timestamp) in ['', '0', 'None', 'null']:
@@ -146,7 +157,7 @@ def fetch_tracking_data(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def load_to_database(request):
-    """Load JSON data to database"""
+    """Start a device-data import without blocking the HTTP worker."""
     try:
         data = json.loads(request.body)
         json_file = data.get('json_file')
@@ -155,22 +166,30 @@ def load_to_database(request):
         if not json_file or not os.path.exists(json_file):
             return JsonResponse({'success': False, 'error': 'JSON file not found'}, status=400)
         
-        # Build command arguments
-        cmd_args = ['load_device_data', json_file]
-        if clear_existing:
-            cmd_args.append('--clear-existing')
-        
-        # Run the management command
-        call_command(*cmd_args)
-        
-        # Get updated statistics
-        total_records = DeviceData.objects.count()
-        
+        with import_job_lock:
+            if import_job_status['running']:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'A data import is already in progress.',
+                }, status=409)
+
+            import_job_status.update({
+                'running': True,
+                'success': None,
+                'error': None,
+                'total_records': DeviceData.objects.count(),
+            })
+            worker = threading.Thread(
+                target=_run_device_import,
+                args=(json_file, clear_existing),
+                daemon=True,
+            )
+            worker.start()
+
         return JsonResponse({
             'success': True,
-            'message': f'Data loaded successfully. Total records: {total_records}',
-            'total_records': total_records
-        })
+            'message': 'Data import started. The dashboard will update when it finishes.',
+        }, status=202)
         
     except Exception as e:
         import traceback
@@ -179,6 +198,35 @@ def load_to_database(request):
             'traceback': traceback.format_exc()
         }
         return JsonResponse({'success': False, 'error': error_details}, status=500)
+
+
+def _run_device_import(json_file, clear_existing):
+    """Run the long-lived import in a worker thread with its own DB connection."""
+    close_old_connections()
+    try:
+        cmd_args = ['load_device_data', json_file]
+        if clear_existing:
+            cmd_args.append('--clear-existing')
+        call_command(*cmd_args)
+        import_job_status.update({
+            'success': True,
+            'error': None,
+            'total_records': DeviceData.objects.count(),
+        })
+    except Exception as error:
+        import_job_status.update({
+            'success': False,
+            'error': str(error),
+        })
+    finally:
+        import_job_status['running'] = False
+        close_old_connections()
+
+
+@require_http_methods(["GET"])
+def get_import_status(request):
+    """Return the state of the current or most recently completed import."""
+    return JsonResponse({'success': True, **import_job_status})
 
 
 @csrf_exempt

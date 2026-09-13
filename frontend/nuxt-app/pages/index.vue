@@ -705,7 +705,7 @@ const loadToDatabase = async (clearExisting = false) => {
     });
     if (response.success) {
       showMessage(response.message);
-      await Promise.all([fetchStats(), fetchDevices()]);
+      await waitForImport();
     } else {
       showMessage(response.error || "Error loading data to database", "error");
     }
@@ -714,6 +714,24 @@ const loadToDatabase = async (clearExisting = false) => {
     showMessage("Error loading data to database", "error");
   }
   loading.value.load = false;
+};
+
+const waitForImport = async () => {
+  const maxAttempts = 180;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const status = await $fetch(`${apiBase}/import-status/`);
+    if (!status.running) {
+      if (status.success) {
+        showMessage(`Data loaded successfully. Total records: ${status.total_records}`);
+        await Promise.all([fetchStats(), fetchDevices()]);
+      } else {
+        showMessage(status.error || "Error loading data to database", "error");
+      }
+      return;
+    }
+  }
+  showMessage("The import is still running. Refresh the dashboard in a moment.");
 };
 
 const exportToCsv = async () => {

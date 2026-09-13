@@ -33,8 +33,14 @@ def api_root(request):
         }
     })
 
+
+def health_check(request):
+    """Minimal endpoint for Render; deliberately does not query the database."""
+    return JsonResponse({"status": "ok"})
+
 urlpatterns = [
     path('', api_root, name='api_root'),
+    path('healthz/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
 ]

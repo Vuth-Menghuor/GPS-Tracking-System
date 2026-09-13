@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone as datetime_timezone
 from django.utils import timezone
 from decimal import Decimal
 
@@ -90,7 +90,7 @@ class Command(BaseCommand):
                     last_update = timezone.now()
                     if hearttime_unix:
                         try:
-                            last_update = datetime.fromtimestamp(hearttime_unix, tz=timezone.utc)
+                            last_update = datetime.fromtimestamp(hearttime_unix, tz=datetime_timezone.utc)
                         except (ValueError, OSError):
                             pass
 

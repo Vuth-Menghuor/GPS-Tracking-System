@@ -365,7 +365,7 @@ def get_stats(request):
         # status. This keeps the dashboard responsive on the hosted database.
         status_counts = {
             row['datastatus_description']: row['count']
-            for row in DeviceData.objects.values('datastatus_description').annotate(count=Count('id'))
+            for row in DeviceData.objects.values('datastatus_description').annotate(count=Count('imei'))
         }
         
         # GPS coordinates availability

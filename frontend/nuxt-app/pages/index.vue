@@ -1,154 +1,157 @@
 <template>
-  <div
-    class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
-  >
+  <div class="min-h-screen bg-slate-50">
     <!-- Header -->
-    <header
-      class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white"
-    >
-      <div class="container mx-auto px-6 py-8">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-4xl font-extrabold flex items-center mb-2">
-              <Icon
-                name="mdi:map-marker-radius"
-                class="mr-3 text-5xl animate-pulse"
-              />
-              GPS Tracking System
-            </h1>
-            <p class="text-blue-100 text-lg">
-              Real-time device monitoring and management
-            </p>
-          </div>
-          <div class="hidden md:block">
-            <div class="text-right">
-              <p class="text-sm text-blue-200">Last Sync</p>
-              <p class="text-lg font-semibold">{{ lastUpdated || "Never" }}</p>
+    <header class="border-b border-slate-800 bg-slate-950 text-white">
+      <div class="container mx-auto px-5 py-5 sm:px-6">
+        <div class="flex items-center justify-between gap-5">
+          <div class="flex min-w-0 items-center gap-3">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500 shadow-lg shadow-blue-950/30">
+              <Icon name="mdi:crosshairs-gps" class="text-2xl" />
             </div>
+            <div class="min-w-0">
+              <h1 class="truncate text-xl font-semibold tracking-tight sm:text-2xl">
+                GPS Tracking System
+              </h1>
+              <p class="mt-0.5 text-sm text-slate-400">
+                Device monitoring dashboard
+              </p>
+            </div>
+          </div>
+          <div class="hidden shrink-0 border-l border-slate-800 pl-5 text-right sm:block">
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Last sync</p>
+            <p class="mt-1 text-sm font-medium text-slate-200">{{ lastUpdated || "Never" }}</p>
+          </div>
+          <div class="sm:hidden">
+            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/10" />
           </div>
         </div>
       </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-6 py-10">
+    <main class="container mx-auto px-5 py-8 sm:px-6 lg:py-10">
       <!-- Statistics Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+      <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-5">
         <div
-          class="bg-white rounded-lg p-6 border border-gray-200 hover:border-blue-300 transition-all duration-300"
+          class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
         >
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1"
+                class="text-xs font-semibold uppercase tracking-wider text-slate-500"
               >
                 Total Devices
               </p>
-              <p class="text-4xl font-extrabold text-gray-900">
+              <p class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
                 {{ stats.total_devices }}
               </p>
             </div>
             <div
-              class="p-4 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200"
+              class="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50"
             >
-              <Icon name="mdi:devices" class="text-4xl text-blue-600" />
+              <Icon name="mdi:devices" class="text-2xl text-blue-600" />
             </div>
           </div>
         </div>
 
         <div
-          class="bg-white rounded-lg p-6 border border-gray-200 hover:border-green-300 transition-all duration-300"
+          class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
         >
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1"
+                class="text-xs font-semibold uppercase tracking-wider text-slate-500"
               >
                 With GPS
               </p>
-              <p class="text-4xl font-extrabold text-gray-900">
+              <p class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
                 {{ stats.with_coordinates }}
               </p>
             </div>
             <div
-              class="p-4 rounded-2xl bg-gradient-to-br from-green-100 to-green-200"
+              class="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50"
             >
               <Icon
                 name="mdi:map-marker-check"
-                class="text-4xl text-green-600"
+                class="text-2xl text-emerald-600"
               />
             </div>
           </div>
         </div>
 
         <div
-          class="bg-white rounded-lg p-6 border border-gray-200 hover:border-red-300 transition-all duration-300"
+          class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
         >
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1"
+                class="text-xs font-semibold uppercase tracking-wider text-slate-500"
               >
                 No GPS
               </p>
-              <p class="text-4xl font-extrabold text-gray-900">
+              <p class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
                 {{ stats.without_coordinates }}
               </p>
             </div>
             <div
-              class="p-4 rounded-2xl bg-gradient-to-br from-red-100 to-red-200"
+              class="flex h-11 w-11 items-center justify-center rounded-lg bg-rose-50"
             >
-              <Icon name="mdi:map-marker-off" class="text-4xl text-red-600" />
+              <Icon name="mdi:map-marker-off" class="text-2xl text-rose-600" />
             </div>
           </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="bg-white rounded-2xl p-8 mb-10 border border-gray-200">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-          <div class="p-2 rounded-lg bg-blue-100 mr-3">
-            <Icon name="mdi:cog" class="text-blue-600 text-xl" />
+      <section class="mb-10 rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex flex-col gap-4 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div>
+            <h2 class="flex items-center text-lg font-semibold text-slate-950">
+              <span class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+                <Icon name="mdi:lightning-bolt-outline" class="text-lg text-slate-700" />
+              </span>
+              Quick actions
+            </h2>
+            <p class="mt-1 text-sm text-slate-500">Update, export, or reload device data.</p>
           </div>
-          Quick Actions
-        </h2>
+        </div>
 
-        <div class="flex flex-wrap gap-4">
+        <div class="flex flex-wrap gap-3 px-5 py-5 sm:px-6">
           <button
-            class="group bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-blue-300 disabled:to-blue-400 text-white px-8 py-4 rounded-xl flex items-center font-semibold transition-all duration-300 transform hover:-translate-y-0.5"
+            class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
             :disabled="loading.fetch"
             @click="fetchTrackingData"
           >
             <Icon
               :name="loading.fetch ? 'mdi:loading' : 'mdi:download'"
               :class="{ 'animate-spin': loading.fetch }"
-              class="mr-2 text-xl"
+              class="mr-2 text-lg"
             />
             {{ loading.fetch ? "Fetching..." : "Fetch GPS Data" }}
           </button>
 
           <button
-            class="group bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-green-300 disabled:to-green-400 text-white px-8 py-4 rounded-xl flex items-center font-semibold transition-all duration-300 transform hover:-translate-y-0.5"
+            class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="loading.export"
             @click="exportToCsv"
           >
             <Icon
               :name="loading.export ? 'mdi:loading' : 'mdi:file-export'"
               :class="{ 'animate-spin': loading.export }"
-              class="mr-2 text-xl"
+              class="mr-2 text-lg"
             />
             {{ loading.export ? "Exporting..." : "Export to CSV" }}
           </button>
 
           <button
-            class="group bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-purple-300 disabled:to-purple-400 text-white px-8 py-4 rounded-xl flex items-center font-semibold transition-all duration-300 transform hover:-translate-y-0.5"
+            class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="loading.refresh"
             @click="refreshData"
           >
             <Icon
               :name="loading.refresh ? 'mdi:loading' : 'mdi:refresh'"
               :class="{ 'animate-spin': loading.refresh }"
-              class="mr-2 text-xl"
+              class="mr-2 text-lg"
             />
             {{ loading.refresh ? "Refreshing..." : "Refresh Data" }}
           </button>
@@ -157,22 +160,22 @@
         <!-- Load to Database Section -->
         <div
           v-if="latestLogFile"
-          class="mt-8 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl"
+          class="mx-5 mb-5 border border-amber-200 bg-amber-50 px-5 py-4 sm:mx-6 sm:mb-6"
         >
           <div class="flex items-start">
-            <div class="p-2 rounded-lg bg-amber-200 mr-3">
-              <Icon name="mdi:information" class="text-amber-700 text-xl" />
+            <div class="mr-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100">
+              <Icon name="mdi:information" class="text-lg text-amber-700" />
             </div>
             <div class="flex-1">
-              <h3 class="font-bold text-amber-900 mb-1 text-lg">
+              <h3 class="font-semibold text-amber-950">
                 Latest GPS Data Available
               </h3>
-              <p class="text-sm text-amber-700 mb-4 font-medium">
+              <p class="mt-1 text-sm text-amber-800">
                 {{ latestLogFile.folder }}
               </p>
-              <div class="flex gap-3">
+              <div class="mt-4 flex flex-wrap gap-3">
                 <button
-                  class="bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 disabled:from-amber-300 disabled:to-yellow-300 text-white px-6 py-3 rounded-lg flex items-center font-semibold transition-all duration-300"
+                  class="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-700 disabled:cursor-not-allowed disabled:bg-amber-300"
                   :disabled="loading.load"
                   @click="loadToDatabase(false)"
                 >
@@ -184,7 +187,7 @@
                   {{ loading.load ? "Loading..." : "Load to Database" }}
                 </button>
                 <button
-                  class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-red-300 disabled:to-red-400 text-white px-6 py-3 rounded-lg flex items-center font-semibold transition-all duration-300"
+                  class="inline-flex items-center rounded-lg border border-rose-200 bg-white px-4 py-2.5 text-sm font-semibold text-rose-700 shadow-sm transition-colors hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
                   :disabled="loading.load"
                   @click="loadToDatabase(true)"
                 >
@@ -201,7 +204,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Device Data Table -->
       <div class="bg-white rounded-2xl overflow-hidden border border-gray-200">
@@ -459,36 +462,36 @@
       leave-from-class="translate-x-0 opacity-100"
       leave-to-class="translate-x-full opacity-0"
     >
-      <div v-if="message.text" class="fixed top-6 right-6 z-50 max-w-md">
+      <div v-if="message.text" class="fixed right-4 top-4 z-50 w-[calc(100%-2rem)] max-w-md sm:right-6 sm:top-6 sm:w-auto">
         <div
           :class="
             message.type === 'success'
-              ? 'bg-gradient-to-r from-green-500 to-green-600'
-              : 'bg-gradient-to-r from-red-500 to-red-600'
+              ? 'border-emerald-200'
+              : 'border-rose-200'
           "
-          class="text-white px-6 py-4 rounded-xl flex items-center border-l-4"
-          :style="{
-            borderColor: message.type === 'success' ? '#10b981' : '#ef4444',
-          }"
+          class="flex items-center rounded-xl border bg-white p-4 shadow-lg shadow-slate-900/10"
         >
-          <div class="p-2 rounded-lg bg-white bg-opacity-20 mr-3">
+          <div
+            :class="message.type === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'"
+            class="mr-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+          >
             <Icon
               :name="
                 message.type === 'success'
                   ? 'mdi:check-circle'
                   : 'mdi:alert-circle'
               "
-              class="text-2xl"
+              class="text-xl"
             />
           </div>
           <div class="flex-1">
-            <p class="font-semibold">{{ message.text }}</p>
+            <p class="text-sm font-medium text-slate-800">{{ message.text }}</p>
           </div>
           <button
-            class="ml-3 hover:bg-white hover:bg-opacity-20 rounded-lg p-1 transition-all"
+            class="ml-3 rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             @click="message.text = ''"
           >
-            <Icon name="mdi:close" class="text-xl" />
+            <Icon name="mdi:close" class="text-lg" />
           </button>
         </div>
       </div>

@@ -97,17 +97,20 @@ async def get_track_info_concurrent(imei_list: List[str], token: str, endpoint: 
     imei_chunks = chunk_list(imei_list, 100)
     logger.info(f"Processing {len(imei_list)} IMEIs in {len(imei_chunks)} batches")
     
-    # Set up aiohttp session with proper timeout and connection limits
+    # Render's free instance has limited memory.  Run small waves instead of
+    # scheduling every batch at once, which avoids a large response backlog.
     timeout = aiohttp.ClientTimeout(total=120)
-    connector = aiohttp.TCPConnector(limit=10, limit_per_host=5)
+    connector = aiohttp.TCPConnector(limit=3, limit_per_host=3)
     
     async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
-        tasks = [
-            fetch_batch(session, chunk, token, endpoint)
-            for chunk in imei_chunks
-        ]
-        
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        results = []
+        wave_size = 3
+        for start in range(0, len(imei_chunks), wave_size):
+            wave = imei_chunks[start:start + wave_size]
+            results.extend(await asyncio.gather(
+                *(fetch_batch(session, chunk, token, endpoint) for chunk in wave),
+                return_exceptions=True,
+            ))
         
         # Process results and handle exceptions
         successful_results = []

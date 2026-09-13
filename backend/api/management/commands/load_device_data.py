@@ -5,7 +5,7 @@ from django.utils import timezone
 from decimal import Decimal
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction
+from django.db import connection, transaction
 from api.models import DeviceData
 
 
@@ -129,6 +129,10 @@ class Command(BaseCommand):
                         ],
                         unique_fields=['imei'],
                     )
+                # The import runs in a long-lived background thread. Close its
+                # pooled Supabase connection after each committed batch so a
+                # stale session cannot block all remaining device records.
+                connection.close()
                 upserted_count += len(devices)
             
             # Progress update

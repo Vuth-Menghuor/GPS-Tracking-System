@@ -670,14 +670,8 @@ const fetchTrackingData = async () => {
       method: "POST",
     });
     if (response.success) {
-      showMessage("GPS tracking data fetched successfully!");
-      if (response.json_file) {
-        latestLogFile.value = {
-          folder: response.folder,
-          json_file: response.json_file,
-        };
-      }
-      await fetchRecentLogs();
+      showMessage(response.message);
+      await waitForTrackingFetch();
     } else {
       showMessage(response.error || "Error fetching tracking data", "error");
     }
@@ -686,6 +680,25 @@ const fetchTrackingData = async () => {
     showMessage("Error fetching tracking data", "error");
   }
   loading.value.fetch = false;
+};
+
+const waitForTrackingFetch = async () => {
+  const maxAttempts = 120;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const status = await $fetch(`${apiBase}/tracking-status/`);
+    if (!status.running) {
+      if (status.success) {
+        latestLogFile.value = { folder: status.folder, json_file: status.json_file };
+        showMessage("GPS tracking data fetched successfully!");
+        await fetchRecentLogs();
+      } else {
+        showMessage(status.error || "Error fetching tracking data", "error");
+      }
+      return;
+    }
+  }
+  showMessage("GPS collection is still running. Refresh the dashboard in a moment.");
 };
 
 const loadToDatabase = async (clearExisting = false) => {

@@ -23,6 +23,14 @@ import_job_status = {
     'error': None,
     'total_records': 0,
 }
+tracking_job_lock = threading.Lock()
+tracking_job_status = {
+    'running': False,
+    'success': None,
+    'error': None,
+    'json_file': None,
+    'folder': None,
+}
 
 def get_relative_short_label(unix_timestamp):
     if not unix_timestamp or str(unix_timestamp) in ['', '0', 'None', 'null']:
@@ -119,32 +127,28 @@ def get_device_data(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def fetch_tracking_data(request):
-    """Fetch new GPS tracking data from API"""
+    """Start GPS collection without blocking the HTTP worker."""
     try:
-        # Run the management command
-        call_command('fetch_tracking_data')
-        
-        # Get the latest response log folder
-        response_logs_dir = os.path.join(settings.BASE_DIR, 'response_logs')
-        if os.path.exists(response_logs_dir):
-            folders = [f for f in os.listdir(response_logs_dir) if f.startswith('tracking_run_')]
-            if folders:
-                latest_folder = sorted(folders)[-1]
-                json_file = os.path.join(response_logs_dir, latest_folder, 'all_records.json')
-                
+        with tracking_job_lock:
+            if tracking_job_status['running']:
                 return JsonResponse({
-                    'success': True,
-                    'message': 'GPS tracking data fetched successfully',
-                    'json_file': json_file,
-                    'folder': latest_folder
-                })
-        
+                    'success': False,
+                    'error': 'GPS data collection is already in progress.',
+                }, status=409)
+
+            tracking_job_status.update({
+                'running': True,
+                'success': None,
+                'error': None,
+                'json_file': None,
+                'folder': None,
+            })
+            threading.Thread(target=_run_tracking_fetch, daemon=True).start()
+
         return JsonResponse({
             'success': True,
-            'message': 'GPS tracking data fetched successfully',
-            'json_file': None
-        })
-        
+            'message': 'GPS data collection started. The dashboard will update when it finishes.',
+        }, status=202)
     except Exception as e:
         import traceback
         error_details = {
@@ -152,6 +156,37 @@ def fetch_tracking_data(request):
             'traceback': traceback.format_exc()
         }
         return JsonResponse({'success': False, 'error': error_details}, status=500)
+
+
+def _run_tracking_fetch():
+    """Collect ProTrack data in a background thread."""
+    try:
+        call_command('fetch_tracking_data')
+        response_logs_dir = os.path.join(settings.BASE_DIR, 'response_logs')
+        folders = [folder for folder in os.listdir(response_logs_dir)
+                   if folder.startswith('tracking_run_')]
+        if not folders:
+            raise RuntimeError('GPS collection completed but no data file was created.')
+        folder = sorted(folders)[-1]
+        json_file = os.path.join(response_logs_dir, folder, 'all_records.json')
+        if not os.path.exists(json_file):
+            raise RuntimeError('GPS collection completed but its JSON data file is missing.')
+        tracking_job_status.update({
+            'success': True,
+            'error': None,
+            'json_file': json_file,
+            'folder': folder,
+        })
+    except Exception as error:
+        tracking_job_status.update({'success': False, 'error': str(error)})
+    finally:
+        tracking_job_status['running'] = False
+
+
+@require_http_methods(["GET"])
+def get_tracking_status(request):
+    """Return the state of the current or most recently completed GPS fetch."""
+    return JsonResponse({'success': True, **tracking_job_status})
 
 
 @csrf_exempt

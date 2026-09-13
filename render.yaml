@@ -2,6 +2,7 @@ services:
   - type: web
     runtime: docker
     name: gps-tracking-api
+    plan: free
     rootDir: backend
     dockerfilePath: ./Dockerfile
     healthCheckPath: /
@@ -37,5 +38,6 @@ services:
 
 databases:
   - name: gps-tracking-db
+    plan: free
     databaseName: gps_tracking
     user: gps_tracking

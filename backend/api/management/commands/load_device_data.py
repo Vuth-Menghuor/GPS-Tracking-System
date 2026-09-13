@@ -59,99 +59,80 @@ class Command(BaseCommand):
             raise CommandError(f'Command failed: {str(e)}')
 
     def load_data_to_db(self, data):
-        """Load data into database with ranking"""
+        """Load data efficiently using batched PostgreSQL/SQLite upserts."""
         created_count = 0
         updated_count = 0
         error_count = 0
 
-        # Process in batches for better performance
-        batch_size = 100
+        # update_or_create performs multiple queries for every IMEI. That is far
+        # too slow for a hosted request containing thousands of devices, so use
+        # one conflict-aware bulk insert per batch instead.
+        batch_size = 500
         for i in range(0, len(data), batch_size):
             batch = data[i:i + batch_size]
-            
-            with transaction.atomic():
-                for record in batch:
-                    try:
-                        # Parse date and time
-                        hearttime_date = None
-                        hearttime_time = None
-                        
-                        if record.get('hearttime_date'):
-                            try:
-                                hearttime_date = datetime.strptime(record['hearttime_date'], '%Y-%m-%d').date()
-                            except ValueError:
-                                pass
-                        
-                        if record.get('hearttime_time'):
-                            try:
-                                hearttime_time = datetime.strptime(record['hearttime_time'], '%H:%M:%S').time()
-                            except ValueError:
-                                pass
+            devices = []
+            for record in batch:
+                try:
+                    hearttime_date = None
+                    hearttime_time = None
+                    if record.get('hearttime_date'):
+                        try:
+                            hearttime_date = datetime.strptime(record['hearttime_date'], '%Y-%m-%d').date()
+                        except ValueError:
+                            pass
+                    if record.get('hearttime_time'):
+                        try:
+                            hearttime_time = datetime.strptime(record['hearttime_time'], '%H:%M:%S').time()
+                        except ValueError:
+                            pass
 
-                        # Create or update device data
-                        # Note: ranking_id is AutoField and will be assigned automatically
-                        # Prefer hearttime_unix to compute last update datetimes so UI/CSV match DB
-                        last_update_detailed_db = None
-                        last_update_relative_db = None
+                    hearttime_unix = int(record.get('hearttime_unix') or 0)
+                    last_update = timezone.now()
+                    if hearttime_unix:
+                        try:
+                            last_update = datetime.fromtimestamp(hearttime_unix, tz=timezone.utc)
+                        except (ValueError, OSError):
+                            pass
 
-                        # If hearttime_unix provided, convert it to an aware UTC datetime
-                        heart_unix_val = record.get('hearttime_unix')
-                        if heart_unix_val not in [None, '', '0']:
-                            try:
-                                ts = int(heart_unix_val)
-                                last_dt = datetime.fromtimestamp(ts, tz=timezone.utc)
-                                last_update_detailed_db = last_dt
-                                last_update_relative_db = last_dt
-                            except Exception:
-                                last_update_detailed_db = None
-                                last_update_relative_db = None
+                    devices.append(DeviceData(
+                        imei=record.get('imei'),
+                        latitude=Decimal(str(record.get('latitude', 0))),
+                        longitude=Decimal(str(record.get('longitude', 0))),
+                        coordinates=record.get('coordinates', ''),
+                        datastatus=int(record.get('datastatus', 0)),
+                        datastatus_description=record.get('datastatus_description', ''),
+                        hearttime_date=hearttime_date,
+                        hearttime_time=hearttime_time,
+                        hearttime_unix=hearttime_unix,
+                        status=record.get('status', ''),
+                        last_update_detailed_db=last_update,
+                        last_update_relative_db=last_update,
+                    ))
+                except Exception as e:
+                    error_count += 1
+                    self.stdout.write(self.style.WARNING(
+                        f'⚠️ Error processing record {record.get("imei", "unknown")}: {str(e)}'
+                    ))
 
-                        # If not set from hearttime_unix, fall back to any provided fields or now
-                        if not last_update_detailed_db:
-                            if record.get('last_update_detailed_db'):
-                                try:
-                                    last_update_detailed_db = datetime.fromisoformat(record['last_update_detailed_db'])
-                                except Exception:
-                                    last_update_detailed_db = timezone.now()
-                            else:
-                                last_update_detailed_db = timezone.now()
+            if devices:
+                imeis = [device.imei for device in devices]
+                existing_imeis = set(DeviceData.objects.filter(imei__in=imeis).values_list('imei', flat=True))
+                created_count += sum(device.imei not in existing_imeis for device in devices)
+                updated_count += sum(device.imei in existing_imeis for device in devices)
 
-                        if not last_update_relative_db:
-                            if record.get('last_update_relative_db'):
-                                try:
-                                    last_update_relative_db = datetime.fromisoformat(record['last_update_relative_db'])
-                                except Exception:
-                                    last_update_relative_db = timezone.now()
-                            else:
-                                last_update_relative_db = timezone.now()
-
-                        device_data, created = DeviceData.objects.update_or_create(
-                            imei=record.get('imei'),
-                            defaults={
-                                'latitude': Decimal(str(record.get('latitude', 0))),
-                                'longitude': Decimal(str(record.get('longitude', 0))),
-                                'coordinates': record.get('coordinates', ''),
-                                'datastatus': int(record.get('datastatus', 0)),
-                                'datastatus_description': record.get('datastatus_description', ''),
-                                'hearttime_date': hearttime_date,
-                                'hearttime_time': hearttime_time,
-                                'hearttime_unix': int(record.get('hearttime_unix', 0)),
-                                'status': record.get('status', ''),
-                                'last_update_detailed_db': last_update_detailed_db,
-                                'last_update_relative_db': last_update_relative_db,
-                            }
-                        )
-                        
-                        if created:
-                            created_count += 1
-                        else:
-                            updated_count += 1
-                            
-                    except Exception as e:
-                        error_count += 1
-                        self.stdout.write(
-                            self.style.WARNING(f'⚠️ Error processing record {record.get("imei", "unknown")}: {str(e)}')
-                        )
+                with transaction.atomic():
+                    DeviceData.objects.bulk_create(
+                        devices,
+                        batch_size=batch_size,
+                        update_conflicts=True,
+                        update_fields=[
+                            'latitude', 'longitude', 'coordinates', 'datastatus',
+                            'datastatus_description', 'hearttime_date', 'hearttime_time',
+                            'hearttime_unix', 'status', 'last_update_detailed_db',
+                            'last_update_relative_db', 'updated_at',
+                        ],
+                        unique_fields=['imei'],
+                    )
             
             # Progress update
             processed = min(i + batch_size, len(data))

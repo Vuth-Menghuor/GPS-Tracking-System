@@ -11,6 +11,7 @@ import subprocess
 import threading
 from datetime import datetime
 from django.db import close_old_connections
+from django.db.models import Count
 from .models import DeviceData
 from datetime import timezone, timedelta
 import math
@@ -360,11 +361,12 @@ def get_stats(request):
     try:
         total_devices = DeviceData.objects.count()
         
-        # Status counts
-        status_counts = {}
-        for status in DeviceData.objects.values_list('datastatus_description', flat=True).distinct():
-            count = DeviceData.objects.filter(datastatus_description=status).count()
-            status_counts[status] = count
+        # Get all status totals in one grouped query rather than one query per
+        # status. This keeps the dashboard responsive on the hosted database.
+        status_counts = {
+            row['datastatus_description']: row['count']
+            for row in DeviceData.objects.values('datastatus_description').annotate(count=Count('id'))
+        }
         
         # GPS coordinates availability
         with_coordinates = DeviceData.objects.exclude(latitude=0, longitude=0).count()

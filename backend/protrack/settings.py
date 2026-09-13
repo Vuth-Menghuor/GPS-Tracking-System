@@ -97,7 +97,9 @@ import dj_database_url
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
-        conn_max_age=600
+        # Supabase Session Pooler expects short-lived connections. Persistent
+        # connections can become stale in Render's threaded web process.
+        conn_max_age=int(os.getenv('DB_CONN_MAX_AGE', '0'))
     )
 }
 

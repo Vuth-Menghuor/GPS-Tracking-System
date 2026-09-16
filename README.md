@@ -4,7 +4,7 @@ A full-stack dashboard for collecting, organizing, and reviewing GPS device data
 
 Built as a production-focused portfolio project, with an emphasis on a clear operational workflow, responsive UI, and an API-backed data pipeline.
 
-![GPS Tracking System desktop dashboard](docs/images/dashboard-desktop.png)
+![GPS Tracking System dashboard on a desktop monitor](docs/images/dashboard-monitor-mockup.png)
 
 ## What it does
 
@@ -21,13 +21,13 @@ Built as a production-focused portfolio project, with an emphasis on a clear ope
 
 The dashboard combines fleet totals, data-refresh controls, a recent-data indicator, and a device table. Each device record includes its IMEI, coordinates, status, last update, and data-status label.
 
-![Desktop dashboard showing device metrics, actions, and records](docs/images/dashboard-desktop.png)
+![Desktop dashboard displayed on a monitor](docs/images/dashboard-monitor-mockup.png)
 
 ### Mobile experience
 
 The same operational controls and summary metrics adapt to a narrow screen.
 
-<img src="docs/images/dashboard-mobile.png" alt="Mobile GPS Tracking System dashboard" width="360" />
+<img src="docs/images/dashboard-phone-mockup.png" alt="Mobile GPS Tracking System dashboard displayed on a phone" width="360" />
 
 ### IMEI verification in ProTrack365
 
@@ -153,4 +153,3 @@ NUXT_PUBLIC_API_BASE=https://your-api.example.com/api npm run dev
 ## Important notice
 
 This application is intended for authorized fleet and asset tracking only. Handle IMEI numbers, account credentials, location data, and exported reports as sensitive operational data.
-

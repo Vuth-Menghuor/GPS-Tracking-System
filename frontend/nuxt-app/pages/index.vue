@@ -17,12 +17,9 @@
               </p>
             </div>
           </div>
-          <div class="hidden shrink-0 border-l border-slate-800 pl-5 text-right sm:block">
-            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Last sync</p>
-            <p class="mt-1 text-sm font-medium text-slate-200">{{ lastUpdated || "Never" }}</p>
-          </div>
-          <div class="sm:hidden">
-            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/10" />
+          <div class="shrink-0 border-l border-slate-800 pl-3 text-right sm:pl-5">
+            <p class="text-[10px] font-medium uppercase tracking-wider text-slate-500 sm:text-xs">Last sync</p>
+            <p class="mt-1 max-w-20 truncate text-[10px] font-medium text-slate-200 sm:max-w-none sm:text-sm">{{ lastUpdated || "Never" }}</p>
           </div>
         </div>
       </div>
@@ -31,72 +28,72 @@
     <!-- Main Content -->
     <main class="container mx-auto px-5 py-8 sm:px-6 lg:py-10">
       <!-- Statistics Cards -->
-      <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-5">
+      <div class="mb-8 grid grid-cols-3 gap-2 sm:gap-4 lg:gap-5">
         <div
-          class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5"
         >
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-xs font-semibold uppercase tracking-wider text-slate-500"
+                class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs sm:tracking-wider"
               >
                 Total Devices
               </p>
-              <p class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+              <p class="mt-1 text-xl font-semibold tracking-tight text-slate-950 sm:mt-2 sm:text-3xl">
                 {{ stats.total_devices }}
               </p>
             </div>
             <div
-              class="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50"
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 sm:h-11 sm:w-11"
             >
-              <Icon name="mdi:devices" class="text-2xl text-blue-600" />
+              <Icon name="mdi:devices" class="text-lg text-blue-600 sm:text-2xl" />
             </div>
           </div>
         </div>
 
         <div
-          class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5"
         >
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-xs font-semibold uppercase tracking-wider text-slate-500"
+                class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs sm:tracking-wider"
               >
                 With GPS
               </p>
-              <p class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+              <p class="mt-1 text-xl font-semibold tracking-tight text-slate-950 sm:mt-2 sm:text-3xl">
                 {{ stats.with_coordinates }}
               </p>
             </div>
             <div
-              class="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50"
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 sm:h-11 sm:w-11"
             >
               <Icon
                 name="mdi:map-marker-check"
-                class="text-2xl text-emerald-600"
+              class="text-lg text-emerald-600 sm:text-2xl"
               />
             </div>
           </div>
         </div>
 
         <div
-          class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-5"
         >
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-xs font-semibold uppercase tracking-wider text-slate-500"
+                class="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs sm:tracking-wider"
               >
                 No GPS
               </p>
-              <p class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+              <p class="mt-1 text-xl font-semibold tracking-tight text-slate-950 sm:mt-2 sm:text-3xl">
                 {{ stats.without_coordinates }}
               </p>
             </div>
             <div
-              class="flex h-11 w-11 items-center justify-center rounded-lg bg-rose-50"
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-50 sm:h-11 sm:w-11"
             >
-              <Icon name="mdi:map-marker-off" class="text-2xl text-rose-600" />
+              <Icon name="mdi:map-marker-off" class="text-lg text-rose-600 sm:text-2xl" />
             </div>
           </div>
         </div>
@@ -116,42 +113,42 @@
           </div>
         </div>
 
-        <div class="flex flex-wrap gap-3 px-5 py-5 sm:px-6">
+        <div class="flex gap-2 px-4 py-4 sm:flex-wrap sm:gap-3 sm:px-6 sm:py-5">
           <button
-            class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+            class="inline-flex min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-lg bg-blue-600 px-2 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300 sm:flex-none sm:px-4 sm:py-2.5 sm:text-sm"
             :disabled="loading.fetch"
             @click="fetchTrackingData"
           >
             <Icon
               :name="loading.fetch ? 'mdi:loading' : 'mdi:download'"
               :class="{ 'animate-spin': loading.fetch }"
-              class="mr-2 text-lg"
+              class="mr-1 text-base sm:mr-2 sm:text-lg"
             />
             {{ loading.fetch ? "Fetching..." : "Fetch GPS Data" }}
           </button>
 
           <button
-            class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            class="inline-flex min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-lg border border-slate-300 bg-white px-2 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-4 sm:py-2.5 sm:text-sm"
             :disabled="loading.export"
             @click="exportToCsv"
           >
             <Icon
               :name="loading.export ? 'mdi:loading' : 'mdi:file-export'"
               :class="{ 'animate-spin': loading.export }"
-              class="mr-2 text-lg"
+              class="mr-1 text-base sm:mr-2 sm:text-lg"
             />
             {{ loading.export ? "Exporting..." : "Export to CSV" }}
           </button>
 
           <button
-            class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            class="inline-flex min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-lg border border-slate-300 bg-white px-2 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-4 sm:py-2.5 sm:text-sm"
             :disabled="loading.refresh"
             @click="refreshData"
           >
             <Icon
               :name="loading.refresh ? 'mdi:loading' : 'mdi:refresh'"
               :class="{ 'animate-spin': loading.refresh }"
-              class="mr-2 text-lg"
+              class="mr-1 text-base sm:mr-2 sm:text-lg"
             />
             {{ loading.refresh ? "Refreshing..." : "Refresh Data" }}
           </button>
@@ -209,14 +206,14 @@
       <!-- Device Data Table -->
       <div class="bg-white rounded-2xl overflow-hidden border border-gray-200">
         <div
-          class="p-6 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-gray-50"
+          class="p-4 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-gray-50 sm:p-6"
         >
-          <h2 class="text-2xl font-bold text-gray-900 flex items-center">
-            <div class="p-2 rounded-lg bg-blue-100 mr-3">
-              <Icon name="mdi:table" class="text-blue-600 text-xl" />
+          <h2 class="flex items-center text-xl font-bold text-gray-900 sm:text-2xl">
+            <div class="mr-2 rounded-lg bg-blue-100 p-2 sm:mr-3">
+              <Icon name="mdi:table" class="text-lg text-blue-600 sm:text-xl" />
             </div>
             Device Records
-            <span class="ml-3 text-sm font-normal text-gray-500">
+            <span class="ml-2 text-xs font-normal text-gray-500 sm:ml-3 sm:text-sm">
               ({{ pagination.total_records }} devices)
             </span>
           </h2>
@@ -224,41 +221,41 @@
 
         <!-- Table -->
         <div class="overflow-x-auto">
-          <table class="w-full">
+          <table class="w-full text-xs sm:text-sm">
             <thead class="bg-gradient-to-r from-gray-50 to-slate-50">
               <tr>
                 <th
-                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+                  class="px-3 py-3 text-left text-[10px] font-bold text-gray-600 uppercase tracking-wide sm:px-6 sm:py-4 sm:text-xs sm:tracking-wider"
                 >
                   Rank
                 </th>
                 <th
-                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+                  class="px-3 py-3 text-left text-[10px] font-bold text-gray-600 uppercase tracking-wide sm:px-6 sm:py-4 sm:text-xs sm:tracking-wider"
                 >
                   IMEI
                 </th>
                 <th
-                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+                  class="px-3 py-3 text-left text-[10px] font-bold text-gray-600 uppercase tracking-wide sm:px-6 sm:py-4 sm:text-xs sm:tracking-wider"
                 >
                   Coordinates
                 </th>
                 <th
-                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+                  class="px-3 py-3 text-left text-[10px] font-bold text-gray-600 uppercase tracking-wide sm:px-6 sm:py-4 sm:text-xs sm:tracking-wider"
                 >
                   Status
                 </th>
                 <th
-                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+                  class="hidden px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider sm:table-cell"
                 >
                   Last Update
                 </th>
                 <th
-                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+                  class="hidden px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider sm:table-cell"
                 >
                   Data Status
                 </th>
                 <th
-                  class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+                  class="hidden px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider sm:table-cell"
                 >
                   Time Since Update
                 </th>
@@ -271,11 +268,11 @@
                 class="hover:bg-blue-50 transition-colors duration-150"
               >
                 <td
-                  class="px-6 py-5 whitespace-nowrap text-sm font-bold text-gray-900"
+                  class="px-3 py-4 whitespace-nowrap text-xs font-bold text-gray-900 sm:px-6 sm:py-5 sm:text-sm"
                 >
                   <div class="flex items-center">
                     <span
-                      class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold"
+                      class="rounded-full bg-blue-100 px-2 py-1 text-[10px] font-bold text-blue-700 sm:px-3 sm:text-xs"
                     >
                       #{{
                         (pagination.current_page - 1) * pagination.per_page +
@@ -286,11 +283,11 @@
                   </div>
                 </td>
                 <td
-                  class="px-6 py-5 whitespace-nowrap text-sm text-gray-900 font-mono font-semibold"
+                  class="px-3 py-4 whitespace-nowrap font-mono text-[10px] font-semibold text-gray-900 sm:px-6 sm:py-5 sm:text-sm"
                 >
                   {{ device.imei }}
                 </td>
-                <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-3 py-4 whitespace-nowrap text-[10px] text-gray-900 sm:px-6 sm:py-5 sm:text-sm">
                   <span
                     v-if="
                       device.latitude &&
@@ -300,7 +297,7 @@
                     "
                     class="flex items-center"
                   >
-                    <Icon name="mdi:map-marker" class="text-green-500 mr-1" />
+                    <Icon name="mdi:map-marker" class="mr-1 text-green-500" />
                     {{ device.latitude.toFixed(6) }},
                     {{ device.longitude.toFixed(6) }}
                   </span>
@@ -309,15 +306,15 @@
                     No GPS data
                   </span>
                 </td>
-                <td class="px-6 py-5 whitespace-nowrap">
+                <td class="px-3 py-4 whitespace-nowrap sm:px-6 sm:py-5">
                   <span
                     :class="getStatusColor(device.status)"
-                    class="px-3 py-1.5 text-xs font-bold rounded-full"
+                    class="rounded-full px-2 py-1 text-[10px] font-bold sm:px-3 sm:py-1.5 sm:text-xs"
                   >
                     {{ device.status }}
                   </span>
                 </td>
-                <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-900">
+                <td class="hidden whitespace-nowrap px-6 py-5 text-sm text-gray-900 sm:table-cell">
                   <div v-if="device.hearttime_date" class="flex items-center">
                     <Icon
                       name="mdi:calendar-clock"
@@ -337,7 +334,7 @@
                     No data
                   </span>
                 </td>
-                <td class="px-6 py-5 whitespace-nowrap">
+                <td class="hidden whitespace-nowrap px-6 py-5 sm:table-cell">
                   <span
                     :class="getDataStatusColor(device.datastatus_description)"
                     class="px-3 py-1.5 text-xs font-bold rounded-full flex items-center justify-center w-fit"
@@ -361,7 +358,7 @@
                     {{ device.datastatus_description }}
                   </span>
                 </td>
-                <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-900">
+                <td class="hidden whitespace-nowrap px-6 py-5 text-sm text-gray-900 sm:table-cell">
                   <span
                     :class="[
                       device.datastatus_description === 'Online'

@@ -28,7 +28,7 @@ The dashboard combines fleet totals, data-refresh controls, a recent-data indica
 The same operational controls and summary metrics adapt to a narrow screen.
 
 <p align="center">
-  <img src="docs/images/dashboard-phone-mockup.png" alt="Mobile GPS Tracking System dashboard displayed on a phone" width="440" />
+  <img src="docs/images/dashboard-phone-mockup.png" alt="Mobile GPS Tracking System dashboard displayed on a phone" width="100%" />
 </p>
 
 ### IMEI verification in ProTrack365
